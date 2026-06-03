@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Ghostli Spotlight</title>
+  <link rel="stylesheet" href="index.css" />
+  <link rel="stylesheet" href="https://kit-pro.fontawesome.com/releases/v6.1.1/css/pro.min.css">
+  
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      background: transparent !important;
+      overflow: hidden;
+    }
+    
+    .quick-prompt-container {
+      width: 100%;
+      height: 100%;
+      box-sizing: border-box;
+      padding: 40px; 
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+     
+    }
+
+
+    @keyframes spotLightIn {
+      0% {
+        opacity: 0;
+        transform: translateY(12px) scale(0.98);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+    
+    @keyframes spotLightOut {
+      0% { opacity: 1; transform: scale(1); }
+      100% { opacity: 0; transform: scale(0.96); }
+    }
+
+    .input_write {
+      width: 100% !important;
+      position: static !important;
+      margin: 0 !important;
+      background-color: #0c0c0c !important;
+      border-radius: 14px !important;
+      border: 1px solid rgba(255, 255, 255, 0.08) !important;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6) !important;
+      -webkit-app-region: no-drag; 
+      transition: border 0.2s ease;
+      opacity: 0; 
+    }
+
+    .input_write.spotlight-anim {
+      animation: spotLightIn 0.25s cubic-bezier(0.2, 0.9, 0.3, 1) forwards;
+    }
+    
+    .input_write.spotlight-out {
+      animation: spotLightOut 0.15s ease-in forwards;
+    }
+
+    .input_write:focus-within {
+      border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    }
+    
+    .text_write {
+      min-height: 50px !important;
+      max-height: 80px !important;
+      padding: 16px !important;
+      font-size: 1rem !important;
+    }
+
+    .toolbar {
+      padding: 4px 16px 14px 16px !important;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .drag-handle {
+      color: #4a4a4a;
+      font-size: 18px;
+      -webkit-app-region: drag;
+      padding: 5px 8px 5px 2px;
+      margin-top: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: color 0.15s ease;
+
+      
+   
+    }
+
+  </style>
+</head>
+<body>
+  <div class="quick-prompt-container">
+    <div class="input_write" id="form">
+      <textarea placeholder="Write to Ghostli..." id="promptInput" class="text_write" autofocus></textarea>
+      <div class="toolbar">
+        <div class="lefttools">
+          <div class="drag-handle" >
+            <i class="fa-regular fa-grid-2"></i>
+          </div>
+        </div>
+        <div class="sendbtn" id="sendBtn">
+          <i class="fa-solid fa-arrow-up"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const input = document.getElementById('promptInput');
+    const sendBtn = document.getElementById('sendBtn');
+    const formBox = document.getElementById('form');
+
+    function closeWithAnim() {
+      formBox.classList.remove('spotlight-anim');
+      formBox.classList.add('spotlight-out');
+      
+      setTimeout(() => {
+        if (window.electronAPI) window.electronAPI.quickPromptClose();
+      }, 140); 
+    }
+
+    function submitPrompt() {
+      const text = input.value.trim();
+      if (text && window.electronAPI) {
+        window.electronAPI.quickPromptSubmit(text);
+        
+        formBox.classList.remove('spotlight-anim');
+        formBox.classList.add('spotlight-out');
+        
+        setTimeout(() => { input.value = ''; }, 140);
+      } else if (!text && window.electronAPI) {
+        closeWithAnim();
+      }
+    }
+
+    sendBtn.addEventListener('click', submitPrompt);
+
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        submitPrompt();
+      } else if (e.key === 'Escape') {
+        closeWithAnim();
+      }
+    });
+
+    window.addEventListener('blur', () => {
+      if (window.electronAPI) window.electronAPI.quickPromptClose();
+    });
+    
+  
+    window.addEventListener('focus', () => {
+      formBox.classList.remove('spotlight-out');
+      
+    
+      formBox.classList.remove('spotlight-anim');
+      void formBox.offsetWidth; 
+      formBox.classList.add('spotlight-anim');
+      
+      setTimeout(() => input.focus(), 10);
+    });
+  </script>
+</body>
+</html>

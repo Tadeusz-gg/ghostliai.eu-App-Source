@@ -1,0 +1,28 @@
+{
+  "name": "ghostli",
+  "productName": "Ghostli",
+  "version": "1.3.9",
+  "description": "Ghostli - Anonymous AI for Developers",
+  "main": "src/index.js",
+  "author": "sttikoo",
+  "license": "MIT",
+  "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "chokidar": "^5.0.0",
+    "crypto-js": "^4.2.0",
+    "discord-rpc": "^4.0.1",
+    "electron-squirrel-startup": "^1.0.1",
+    "electron-updater": "^6.6.2",
+    "express": "^4.21.2",
+    "socket.io": "^4.8.1",
+    "sqlite3": "^5.1.7"
+  },
+  "repository": {
+    "type": "discord",
+    "url": "https://discord.gg/Rjuy6KdKRR"
+  },
+  "bugs": {
+    "url": "https://discord.gg/Rjuy6KdKRR"
+  },
+  "homepage": "https://discord.gg/Rjuy6KdKRR"
+}

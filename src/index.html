@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Ghostli</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <link rel="stylesheet" href="index.css" />
+  <link rel="stylesheet" href="markdown.css" />
+  <link rel="stylesheet" href="renderer/find-widget.css" />
+  <link rel="stylesheet" href="https://kit-pro.fontawesome.com/releases/v6.1.1/css/pro.min.css">
+  <link rel="stylesheet" type='text/css' href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+  <!-- KaTeX for LaTeX math rendering -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" crossorigin="anonymous">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" crossorigin="anonymous"></script>
+  <script>
+    window.addEventListener('load', function () {
+      if (typeof Prism !== 'undefined') {
+        console.log('Prism.js loaded successfully');
+        if (Prism.plugins && Prism.plugins.autoloader) {
+          Prism.plugins.autoloader.languages_path = 'https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/';
+        }
+      } else {
+        console.error('Prism.js failed to load');
+      }
+    });
+  </script>
+  <script src="auth.js"></script>
+  <script>
+    // tx2
+    (function () {
+      'use strict';
+
+      document.addEventListener('contextmenu', function (e) {
+        e.preventDefault();
+        return false;
+      });
+
+      document.addEventListener('keydown', function (e) {
+        if (e.keyCode === 123) {
+          e.preventDefault();
+          return false;
+        }
+
+        if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
+          e.preventDefault();
+          return false;
+        }
+
+        if (e.ctrlKey && e.shiftKey && e.keyCode === 74) {
+          e.preventDefault();
+          return false;
+        }
+
+        if (e.ctrlKey && e.keyCode === 85) {
+          e.preventDefault();
+          return false;
+        }
+
+        if (e.ctrlKey && e.shiftKey && e.keyCode === 67) {
+          e.preventDefault();
+          return false;
+        }
+      });
+
+      const originalOpen = window.open;
+      window.open = function () {
+        return null;
+      };
+
+      setInterval(function () {
+        if (window.outerHeight - window.innerHeight > 200 ||
+          window.outerWidth - window.innerWidth > 200) {
+          window.close();
+        }
+      }, 1000);
+
+    })();
+  </script>
+  <script src="renderer/state.js" defer></script>
+  <script src="rag/rag-retrieval.js" defer></script>
+  <script src="rag/session-code-rag.js" defer></script>
+  <script src="rag/web-rag-pipeline.js" defer></script>
+  <script src="script.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/acorn/8.11.3/acorn.min.js"></script>
+</head>
+
+<body>
+
+
+  <div style="display: none;" class="authtoken">
+    <div class="token-container">
+      <div class="token-header">
+        <img class="token-logo" src="assets/mainlogo.png" alt="Logo">
+        <h2>Ghostli Auth</h2>
+        <p id="tokenDescription">Enter your 8-digit authentication token</p>
+      </div>
+      <div class="tokens">
+        <input class="token" type="text" maxlength="1" pattern="[0-9]">
+        <input class="token" type="text" maxlength="1" pattern="[0-9]">
+        <input class="token" type="text" maxlength="1" pattern="[0-9]">
+        <input class="token" type="text" maxlength="1" pattern="[0-9]">
+        <input class="token" type="text" maxlength="1" pattern="[0-9]">
+        <input class="token" type="text" maxlength="1" pattern="[0-9]">
+        <input class="token" type="text" maxlength="1" pattern="[0-9]">
+        <input class="token" type="text" maxlength="1" pattern="[0-9]">
+      </div>
+    </div>
+  </div>
+
+
+
+  <div style="display: none;" class="loginscreen">
+    <div class="closeloginscreen"><i style="color: white;" class="fa-solid fa-power-off"></i></div>
+    <div class="loginbox">
+      <div class="logomain"><img class="logoghostli" src="assets/mainlogo.png" alt="Logo"></div>
+      <div class="ddg">
+        <div class="namelogin">Ghostli</div>
+        <div class="logindes" id="loginDescription">Set your password</div>
+      </div>
+      <div class="inplogin">
+        <div class="ii" id="eyeIcon"><i class="fa-regular fa-eye"></i></div>
+        <input class="logininput" id="passwordInput" placeholder="Enter your password" type="password">
+        <div class="ii" id="arrowIcon"><i class="fa-regular fa-arrow-right"></i></div>
+      </div>
+      <div class="login-hint" id="loginHint">
+        Click the arrow or press the Enter Key
+      </div>
+    </div>
+  </div>
+
+  <div style="display: none;" class="loadingscreen">
+    <div class="loading-content">
+      <div class="loader"></div>
+    </div>
+  </div>
+
+  <div style="display: none;" class="startup-loadingscreen">
+    <div class="loading-content">
+      <div class="loader"></div>
+    </div>
+  </div>
+
+  <div style="display: none;" class="onboardingscreen">
+    <div class="onboarding-content">
+      <div class="onboarding-text-container">
+        <div class="onboarding-text welcome-text">
+          <h1>Hi, I'm Ghostli</h1>
+        </div>
+        <div class="onboarding-text assistant-text">
+          <h2>Your best AI programming assistant</h2>
+        </div>
+        <div class="onboarding-text preparing-text">
+          <h2>We prepare everything for you</h2>
+        </div>
+        <div class="onboarding-text loading-text">
+          <div class="loader"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display: none;" class="progressscreen">
+    <div class="progress-content">
+      <div class="progress-logo-wrapper">
+        <div class="progress-logo">
+          <img src="assets/mainlogo.png" alt="Ghostli Logo">
+        </div>
+        <div class="progress-typing-text"></div>
+      </div>
+    </div>
+  </div>
+
+
+
+  <div class="modal-overlay" id="settingsModal" style="display: none;">
+    <div class="mainsettings">
+      <div class="closebtnsett" id="closeSettings"><i style="font-size: 16px;" class="fa-solid fa-xmark"></i></div>
+      <div class="navsettings">
+        <div class="navsettbtn active" data-tab="main"><i style="margin-right: 7px; font-size: 90%; margin-top: 3px;"
+            class="fa-regular fa-gear"></i>General</div>
+        <div class="navsettbtn" data-tab="ai"><i style="margin-right: 7px; font-size: 90%; margin-top: 3px;"
+            class="fa-regular fa-cloud"></i>Ai</div>
+        <div class="navsettbtn" data-tab="tuneai"><i style="margin-right: 7px; font-size: 90%; margin-top: 3px;"
+            class="fa-regular fa-rocket-launch"></i>Tune AI</div>
+        
+        <div class="navsettbtn" data-tab="security"><i style="margin-right: 7px; font-size: 90%; margin-top: 3px;"
+            class="fa-regular fa-key"></i>Security</div>
+        <div class="navsettbtn" data-tab="account"><i style="margin-right: 7px; font-size: 90%; margin-top: 3px;"
+            class="fa-regular fa-user"></i>Account</div>
+        <div class="navsettbtn" data-tab="extensions"><i style="margin-right: 7px; font-size: 90%; margin-top: 3px;"
+            class="fa-regular fa-grid-2"></i>Extensions</div>
+                    <div class="navsettbtn" data-tab="shortcuts"><i style="margin-right: 7px; font-size: 90%; margin-top: 3px;"
+            class="fa-regular fa-keyboard"></i>Shortcuts</div>
+      </div>
+
+      <div class="settings-content">
+        <div class="headsettings">
+          <div class="namesettmain">Settings</div>
+        </div>
+
+        <div class="tab-content">
+          <div class="tab-pane active" id="tab-main">
+            <div class="setting-item">
+              <label>Language</label>
+              <select>
+                <option>English</option>
+              </select>
+            </div>
+            <div class="setting-item">
+              <label>Notifications</label>
+              <select id="globalNotificationsSelect">
+                <option value="off">Off</option>
+                <option value="on">On</option>
+              </select>
+            </div>
+            
+            <div class="setting-item">
+              <label>Window Size</label>
+              <select id="windowSizeSelect">
+                <option value="large">Medium (1350x730)</option>
+                <option value="small">Small (1200x670)</option>
+                <option value="extralarge">Large (1450x800)</option>
+                <option value="huge">Extra Large (1600x900)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="tab-pane" id="tab-ai">
+            <div class="setting-item">
+              <label>AI Model</label>
+              <select id="aiModelSelect">
+                <option value="g-basic">G-Basic</option>
+                <option value="g-max">G-Max</option>
+                <option value="grok-4-1">Grok</option>
+              </select>
+            </div>
+            <div class="setting-item">
+              <label>Terminal Access</label>
+              <select id="terminalAccessSelect">
+                <option value="on">On</option>
+                <option value="off">Off</option>
+              </select>
+            </div>
+
+            <div class="setting-item">
+              <label>Initial Context</label>
+              <textarea name="inituserprompt" id="initialContextTextarea" class="inituserprompt" rows="3"
+                placeholder="Enter your initial prompt here..."></textarea>
+            </div>
+
+            <div class="setting-item">
+              <label id="temp-label">Temperature (0.8)</label>
+              <input type="range" id="temp-slider" min="0.1" max="1" step="0.1" value="0.8">
+            </div>
+
+
+
+
+
+          </div>
+
+          <div class="tab-pane" id="tab-tuneai">
+            <div class="setting-item">
+              <label>AI Mode</label>
+              <select id="tuneAiModeSelect">
+                <option value="default">Default</option>
+                <option value="auto">Auto (Smart Switching)</option>
+                <option value="frontend">Frontend Mode</option>
+                <option value="security">Security Architect Mode</option>
+                <option value="pentest">Pentester & Red Team Mode</option>
+                <option value="cheatdev">Cheat Developer Mode</option>
+              </select>
+            </div>
+
+            <div class="setting-item">
+              <label>Web Search</label>
+              <select id="tuneAiWebSearchSelect">
+                    <option value="on">On</option>
+                <option value="off">Off</option>
+
+              </select>
+            </div>
+
+            <div class="setting-item">
+              <label>Response Style</label>
+              <select id="tuneAiStyleSelect">
+                <option value="normal">Normal</option>
+                <option value="concise">Concise</option>
+                <option value="detailed">Detailed</option>
+              </select>
+            </div>
+
+            <div class="setting-item">
+              <label>Context Level</label>
+              <select id="tuneAiContextSelect">
+                <option value="balanced">Balanced</option>
+                <option value="low">Low (Faster)</option>
+                <option value="high">High (More Files)</option>
+              </select>
+            </div>
+
+          </div>
+
+          <div class="tab-pane" id="tab-security">
+            <div class="setting-item">
+              <label>Auto Logout Timeout</label>
+              <select id="timeoutSelect">
+                <option value="never">Never</option>
+                <option value="10">10 minutes</option>
+                <option value="20">20 minutes</option>
+                <option value="40">40 minutes</option>
+              </select>
+            </div>
+
+            <div class="setting-item">
+              <label>Download Sessions</label>
+              <button id="downloadSessionsBtn" class="btn-white">Download Sessions</button>
+            </div>
+
+            <div class="setting-item">
+              <label>Import Sessions</label>
+              <button id="importSessionsBtn" class="btn-danger">Import Sessions</button>
+            </div>
+            <div class="setting-item">
+              <label>Change Password</label>
+              <button id="changePasswordBtn" class="btn-danger">Change Password</button>
+            </div>
+            <div class="setting-item">
+              <label>Reset All Data</label>
+              <button id="resetAllDataBtn" class="btn-danger">Reset All Data</button>
+            </div>
+
+          </div>
+
+          <div class="tab-pane" id="tab-account">
+            <div class="setting-item">
+              <label>Account Token</label>
+              <div class="acctokencontent">
+                <div class="tokenitem">
+                  <div class="tokennumber" id="token-digit-0">-</div>
+                </div>
+                <div class="tokenitem">
+                  <div class="tokennumber" id="token-digit-1">-</div>
+                </div>
+                <div class="tokenitem">
+                  <div class="tokennumber" id="token-digit-2">-</div>
+                </div>
+                <div class="tokenitem">
+                  <div class="tokennumber" id="token-digit-3">-</div>
+                </div>
+                <div class="tokenitem">
+                  <div class="tokennumber" id="token-digit-4">-</div>
+                </div>
+                <div class="tokenitem">
+                  <div class="tokennumber" id="token-digit-5">-</div>
+                </div>
+                <div class="tokenitem">
+                  <div class="tokennumber" id="token-digit-6">-</div>
+                </div>
+                <div class="tokenitem">
+                  <div class="tokennumber" id="token-digit-7">-</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="sele"></div>
+            <div style="margin-top: 15px;" class="setting-item">
+              <label>Reset Settings</label>
+              <button id="resetSettingsBtn" class="btn-danger">Reset to Default</button>
+            </div>
+            <div class="setting-item">
+              <label>Delete All Sessions</label>
+              <button id="deleteAllSessionsBtn" class="btn-danger">Delete All Sessions</button>
+            </div>
+            <div class="setting-item">
+              <label>Logout</label>
+              <button id="logoutBtn" class="btn-danger">Logout from Token</button>
+            </div>
+          </div>
+
+          <div class="tab-pane" id="tab-shortcuts">
+            <div class="setting-item">
+              <label>Always on Top (Ctrl+Shift+O)</label>
+              <select id="shortcutAlwaysOnTop">
+                <option value="on">On</option>
+                <option value="off">Off</option>
+              </select>
+            </div>
+            <div class="setting-item">
+              <label>Quick Prompt Spotlight (Alt+I)</label>
+              <select id="shortcutQuickPrompt">
+                <option value="on">On</option>
+                <option value="off">Off</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="tab-pane" id="tab-extensions">
+            <div class="setting-item">
+              <label>Extensions</label>
+              <div class="extensions-container">
+                <div class="extensions-search">
+                  <input type="text" id="extensionSearch" placeholder="Search extensions..."
+                    class="extension-search-input">
+                </div>
+                <div id="extensionsList" class="extensions-list">
+
+                </div>
+              </div>
+            </div>
+
+            <div class="setting-item">
+              <div class="installed-extensions-header" onclick="toggleInstalledExtensions()">
+                <label>Installed Extensions</label>
+                <i class="fa-solid fa-chevron-down installed-extensions-arrow"></i>
+              </div>
+              <div class="installed-extensions-container" id="installedExtensionsContainer" style="display: none;">
+                <div id="installedExtensionsList" class="installed-extensions-list">
+
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mainsettings" style="display: none;">
+    <div class="navsettings">
+      <div class="navsettbtn">Main</div>
+      <div class="navsettbtn">Ai</div>
+      <div class="navsettbtn">Security</div>
+      <div class="navsettbtn">Personalization</div>
+      <div class="navsettbtn">Account</div>
+      <div class="navsettbtn">About</div>
+    </div>
+    <div class="headsettings">
+      <div class="namesettmain">Settings</div>
+    </div>
+  </div>
+
+  <div class="headbar">
+    <div class="infhead">ghostli.eu</div>
+    <div class="minimalize hh" onclick="window.electron.minimize()">
+      <i style="margin-top: 3px;" class="fa-regular fa-circle-minus"></i>
+    </div>
+    <div class="close hh" onclick="window.electron.close()" style="margin-right: 5px;">
+      <i style="margin-top: 3px;" class="fa-regular fa-circle-xmark"></i>
+    </div>
+  </div>
+  <div class="container">
+    <div class="sessionlist">
+      <div class="btnshead">
+        <div class="btnfm">
+          <img class="customicon" src="assets/iconchat_static.png" data-static="assets/iconchat_static.png"
+            data-anim="assets/iconchat.gif" alt="Ikonka">
+          New session
+        </div>
+
+        <div style="margin-top: 7px;" class="btnfm" id="settingsBtn">
+          <img class="customicon customiconset" src="assets/iconsettings_static.png"
+            data-static="assets/iconsettings_static.png" data-anim="assets/iconsettings.gif" alt="Ikonka">
+
+
+          Settings
+        </div>
+        <div class="selector"></div>
+        <div class="namesecc">Your sessions<i id="klkl"
+            style="margin-left: 60px; margin-top: 3px; position: absolute; font-size: 80%;"
+            class="fa-solid fa-magnifying-glass klkl"></i></div>
+      </div>
+      <div class="sessioncontainer">
+        <div class="session">
+          <div class="infsession">
+            <div class="nicksession">Name session #1</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="main">
+      <div class="first_mess">
+        <h2>Hello, I'm Ghostli</h2>
+        <p>Your sessions, messages, and queries are end-to-end encrypted and stored exclusively locally for maximum
+          privacy. With us, you can ask about anything, knowing that your data is safe and anonymous. How can I help you
+          today?</p>
+      </div>
+      <div class="live-session-strip hidden" id="liveSessionStrip" aria-hidden="true"></div>
+      <div class="chat_content" id="chat_content">
+      </div>
+      <div class="scroll-to-bottom" id="scrollToBottom" style="display: none;">
+        <i class="fa-solid fa-chevron-down"></i>
+      </div>
+      <div class="textcontent" style="flex-direction: column; align-items: center;">
+        <div class="input_write" id="form">
+          <textarea placeholder="Write to Ghostli..." id="text_write" class="text_write"></textarea>
+          <div class="toolbar">
+            <div class="lefttools">
+              <div class="filebtn">
+                <i class="fa-regular fa-paperclip"></i>
+              </div>
+              <div class="settingschat">
+                <i class="fa-regular fa-sliders"></i>
+              </div>
+            </div>
+            <div class="model-selector-container">
+              <div class="model-selector" id="modelSelector">
+                <span class="model-selector-text" id="modelSelectorText">g-basic</span>
+                <i class="fa-solid fa-chevron-down model-selector-icon"></i>
+              </div>
+              <div class="model-selector-menu hidden" id="modelSelectorMenu">
+                <div class="model-option" data-model="g-basic">
+                  <div class="model-option-content">
+                    <span class="model-name">G-Basic</span>
+                    <span class="model-desc">Recommended for use</span>
+                  </div>
+                  <div class="model-check"></div>
+                </div>
+                <div class="model-option" data-model="g-max">
+                  <div class="model-option-content">
+                    <span class="model-name">G-Max</span>
+                    <span class="model-desc">For demanding tasks</span>
+                  </div>
+                  <div class="model-check"></div>
+                </div>
+                <div class="model-option" data-model="grok-4-1">
+                  <div class="model-option-content">
+                    <span class="model-name">Grok</span>
+                    <span class="model-desc">Fast and flexible</span>
+                  </div>
+                  <div class="model-check"></div>
+                </div>
+              </div>
+            </div>
+            <div class="sendbtn">
+              <i class="fa-solid fa-arrow-up"></i>
+            </div>
+          </div>
+          <div class="slash-commands-menu hidden" id="slashCommandsMenu" role="listbox" aria-label="Slash commands"></div>
+        </div>
+
+
+
+
+
+
+      </div>
+
+      <div class="settings-popup hidden">
+        <div class="option">
+          <label class="btnset">
+            <i class="fa-regular fa-calendar-minus cv"></i>
+            <div class="nntext">
+              <div class="cwel">
+                <div style="font-size: 95%;">Delete chat after exit</div>
+                <div class="subtext">Deletes chat after exiting the app</div>
+              </div>
+            </div>
+            <input type="checkbox" id="deleteAfterExit">
+          </label>
+        </div>
+
+        <div class="option">
+          <label class="btnset">
+            <i class="fa-regular fa-rocket cv"></i>
+            <div class="nntext">
+              <div class="cwel">
+                <div style="font-size: 95%;">Think mode</div>
+                <div class="subtext">Advanced Thinking Model, (g-pro)</div>
+              </div>
+            </div>
+            <input type="checkbox" id="thinkTurbo">
+          </label>
+        </div>
+        <div class="option">
+          <label class="btnset">
+            <i class="fa-regular fa-code-pull-request cv"></i>
+            <div class="nntext">
+              <div class="cwel">
+                <div style="font-size: 95%;">Live Code</div>
+                <div class="subtext">Ghostli writes in your files</div>
+              </div>
+            </div>
+            <input type="checkbox" id="liveCodeBtn">
+          </label>
+        </div>
+        <div class="option">
+          <label class="btnset">
+            <i class="fa-regular fa-folder-tree cv"></i>
+            <div class="nntext">
+              <div class="cwel">
+                <div style="font-size: 95%;">Repository Context</div>
+                <div class="subtext">AI analyzes your entire project</div>
+              </div>
+            </div>
+            <input type="checkbox" id="repoContextBtn">
+          </label>
+        </div>
+        <div class="option">
+          <label class="btnset">
+            <i class="fa-regular fa-layer-plus cv"></i>
+            <div class="nntext">
+              <div class="cwel">
+                <div style="font-size: 95%;">Context Building Engine</div>
+                <div class="subtext">Building context before responding</div>
+              </div>
+            </div>
+            <input type="checkbox" id="webRagBtn">
+          </label>
+        </div>
+      </div>
+
+
+    </div>
+  </div>
+
+
+  <div class="prevmodal" id="prevmodal" style="display: none;">
+    <div class="prevmodal-close" id="prevmodalClose">
+      <i class="fa-regular fa-xmark"></i>
+    </div>
+    <img class="previmg" src="assets/previewlicecode.gif" alt="">
+    <div class="lljs">
+      <div class="prevtext">Try Live Code</div>
+      <div class="prevsubtext">Ghostli writes in your file creates, edits the code and automatically makes changes</div>
+    </div>
+  </div>
+
+
+  <script>
+    const buttons = document.querySelectorAll(".btnfm");
+    const animationDuration = 1000;
+
+    buttons.forEach(btn => {
+      const icon = btn.querySelector(".customicon");
+
+      const preloadGif = new Image();
+      preloadGif.src = icon.dataset.anim;
+
+      let isAnimating = false;
+
+      btn.addEventListener("click", () => {
+        if (!isAnimating) {
+          isAnimating = true;
+          icon.src = icon.dataset.anim + "?t=" + new Date().getTime();
+
+          setTimeout(() => {
+            icon.src = icon.dataset.static;
+            isAnimating = false;
+          }, animationDuration);
+        }
+      });
+    });
+
+
+
+  </script>
+  <div id="find-widget">
+    <div class="find-part">
+      <i class="fa-regular fa-magnifying-glass find-icon-search"></i>
+      <input type="text" id="find-input" placeholder="Find">
+      <div class="find-input-options">
+        <div class="find-toggle" id="find-match-case" title="Match Case (Alt+C)">
+          <span>Aa</span>
+        </div>
+        <div class="find-toggle" id="find-match-word" title="Match Whole Word (Alt+W)">
+          <span style="border: 1px solid currentColor; padding: 0px 2px; font-size: 10px; border-radius: 2px;">ab</span>
+        </div>
+      </div>
+    </div>
+    <div class="find-divider"></div>
+    <div class="find-result-count" id="find-count">No results</div>
+    <div class="find-nav-buttons">
+      <div class="find-btn" id="find-prev" title="Previous Match (Shift+Enter)">
+        <i class="fa-regular fa-arrow-up"></i>
+      </div>
+      <div class="find-btn" id="find-next" title="Next Match (Enter)">
+        <i class="fa-regular fa-arrow-down"></i>
+      </div>
+      <div class="find-btn" id="find-close" title="Close (Esc)">
+        <i class="fa-light fa-xmark"></i>
+      </div>
+    </div>
+  </div>
+
+  <script src="renderer/find-widget.js"></script>
+</body>
+
+</html>

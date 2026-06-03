@@ -1,0 +1,194 @@
+/* Find Widget Container - Ultra Minimal */
+#find-widget {
+    position: absolute;
+    top: 40px;
+    right: 10px;
+    width: 330px;
+    height: 38px;
+     background-color: rgb(15, 15, 15);
+    border: 1px solid rgb(32, 32, 32);
+    border-radius: 6px;
+
+    display: flex;
+    align-items: center;
+    padding: 0 6px;
+    z-index: 100000;
+    font-family: 'Inter', sans-serif;
+    color: #cccccc;
+
+    /* Dynamic Animation: Slide from Right */
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateX(30px);
+    transition:
+        opacity 0.2s ease-out,
+        transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+        visibility 0.35s step-end;
+}
+
+#find-widget.visible {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateX(0);
+    transition:
+        opacity 0.2s ease-out,
+        transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+        visibility 0s step-start;
+}
+
+/* Input Area */
+.find-part {
+    display: flex;
+    align-items: center;
+    flex-grow: 1;
+    height: 100%;
+    margin-right: 4px;
+    position: relative;
+    background-color: transparent;
+}
+
+/* Cleaner, thinner icons */
+.find-icon-search {
+    color: #888;
+    font-size: 11px;
+    /* Smaller */
+    margin-left: 6px;
+    margin-right: 6px;
+    opacity: 0.7;
+}
+
+input#find-input {
+    background: transparent;
+    border: none;
+    color: #e0e0e0;
+    outline: none;
+    font-size: 13px;
+    flex-grow: 1;
+    width: 100%;
+    height: 100%;
+    font-family: inherit;
+    font-weight: 400;
+}
+
+input#find-input::placeholder {
+    color: #666;
+}
+
+/* Options */
+.find-input-options {
+    display: flex;
+    align-items: center;
+    gap: 0px;
+    /* Tighter */
+    padding-right: 2px;
+}
+
+.find-toggle {
+    width: 22px;
+    height: 22px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    border-radius: 4px;
+    color: #777;
+    transition: all 0.1s ease;
+    font-size: 11px;
+}
+
+.find-toggle:hover {
+    background-color: #333;
+    color: #bbb;
+}
+
+.find-toggle.active {
+    background-color: #00000000;
+    /* Minimal active state */
+    color: #fff;
+    font-weight: 600;
+}
+
+/* Divider - removed or very subtle */
+.find-divider {
+    width: 1px;
+    height: 16px;
+    background-color: #333;
+    margin: 0 6px;
+}
+
+/* Results Count */
+.find-result-count {
+    font-size: 11px;
+    color: #666;
+    margin-right: 8px;
+    min-width: max-content;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.2px;
+}
+
+/* Navigation Buttons */
+.find-nav-buttons {
+    display: flex;
+    align-items: center;
+    gap: 1px;
+}
+
+.find-btn {
+    width: 20px;
+
+    height: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    border-radius: 3px;
+    color: #888;
+    transition: all 0.1s ease;
+}
+
+.find-btn:hover {
+    background-color: #2b2b2b;
+    color: #fff;
+}
+
+.find-btn.disabled {
+    opacity: 0.3;
+    pointer-events: none;
+}
+
+.find-btn i {
+    font-size: 12px;
+    /* Small clean icons */
+    font-weight: 300;
+    /* Attempt to make them feel thinner */
+}
+
+#find-close {
+    margin-left: 2px;
+}
+
+#find-close:hover {
+    background-color: #2b2b2b;
+
+    color: #fff;
+}
+
+/* 
+   HIGHLIGHTING STYLES 
+*/
+.ghostli-highlight {
+    background-color: rgba(255, 255, 255, 0.12);
+    color: inherit;
+    border-radius: 2px;
+}
+
+.ghostli-highlight.active {
+    background-color: rgba(255, 255, 255, 0.95);
+    color: #000 !important;
+    font-weight: 500;
+
+    z-index: 10;
+    position: relative;
+}

@@ -1,0 +1,195 @@
+<!-- spk (2.2.0) stable -->
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>GhostliAI</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      width: 400px;
+      height: 500px;
+      background: #0a0a0a;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .splash-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      width: 100%;
+    }
+
+    .logo {
+      width: 100px;
+      height: 100px;
+      margin-bottom: 40px;
+    }
+
+    .progress-container {
+      position: absolute;
+      bottom: 60px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 3px;
+    }
+
+    .progress-segment {
+      width: 80px;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.2);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .progress-segment.left-rounded {
+      border-radius: 5px 0 0 5px;
+    }
+
+    .progress-segment.right-rounded {
+      border-radius: 0 5px 5px 0;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: #ffffff;
+      width: 0%;
+      transition: width 0.2s ease;
+    }
+
+    .progress-fill.left-rounded {
+      border-radius: 2px 0 0 2px;
+    }
+
+    .progress-fill.right-rounded {
+      border-radius: 0 2px 2px 0;
+    }
+
+    .progress-fill {
+      transition: width 0.2s ease;
+    }
+
+  </style>
+</head>
+<body>
+  <div class="splash-container">
+    <img src="assets/mainlogo.png" alt="GhostliAI Logo" class="logo">
+    
+    <div class="progress-container">
+      <div class="progress-segment left-rounded">
+        <div class="progress-fill left-rounded"></div>
+      </div>
+      <div class="progress-segment right-rounded">
+        <div class="progress-fill right-rounded"></div>
+      </div>
+    </div>
+  </div>
+
+ <script>
+  let progressStartTime;
+  let minSplashTime = 2500; 
+  let progressInterval;
+  let isUpdating = false;
+  let updateStatus = 'checking';
+  let currentUpdateProgress = 0;
+
+  const delayBetweenBars = 400;
+
+  function startProgress() {
+    progressStartTime = Date.now();
+    
+    progressInterval = setInterval(() => {
+      const elapsed = Date.now() - progressStartTime;
+      const progress = Math.min(elapsed / minSplashTime, 1);
+      
+      updateProgress(progress);
+    }, 16); 
+  }
+
+  function updateProgress(progress) {
+    const leftFill = document.querySelector('.progress-segment.left-rounded .progress-fill');
+    const rightFill = document.querySelector('.progress-segment.right-rounded .progress-fill');
+    
+    let displayProgress = progress;
+    if (isUpdating && updateStatus === 'downloading') {
+      displayProgress = currentUpdateProgress / 100;
+    }
+    
+    const totalWidth = displayProgress * 100; 
+
+    if (totalWidth <= 50) {
+      leftFill.style.width = totalWidth * 2 + '%'; 
+      rightFill.style.width = '0%';
+    } else {
+      leftFill.style.width = '100%';
+
+      const timeSinceLeftFull = Date.now() - (progressStartTime + minSplashTime * 0.5);
+
+      if (timeSinceLeftFull >= delayBetweenBars) {
+        const rightProgress = Math.min((totalWidth - 50) * 2, 100);
+        rightFill.style.width = rightProgress + '%';
+      } else {
+        rightFill.style.width = '0%';
+      }
+    }
+  }
+
+  if (window.splashAPI) {
+    window.splashAPI.onUpdateStatus((data) => {
+      updateStatus = data.status;
+      isUpdating = data.status === 'available' || data.status === 'downloading';
+      
+      console.log('Update status:', data.status);
+      
+      if (data.status === 'downloaded') {
+        setTimeout(() => {
+          if (progressInterval) {
+            clearInterval(progressInterval);
+          }
+          window.close();
+        }, 2000);
+      }
+    });
+
+    window.splashAPI.onUpdateProgress((data) => {
+      if (data.percent !== undefined) {
+        currentUpdateProgress = data.percent;
+        updateStatus = 'downloading';
+        isUpdating = true;
+        console.log('Update download progress:', data.percent + '%');
+      } else {
+        const actualLoadingTime = Math.max(data.minTime, data.elapsed);
+        minSplashTime = actualLoadingTime;
+      }
+    });
+
+    window.splashAPI.onCloseSplash(() => {
+      if (progressInterval) {
+        clearInterval(progressInterval);
+      }
+      window.close();
+    });
+  }
+
+  window.addEventListener('load', () => {
+    startProgress();
+  });
+</script>
+
+</body>
+</html>
